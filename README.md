@@ -52,7 +52,9 @@ npm run build
 
 ## Live Demo
 
-
+https://student-profile-dashboard.vercel.app/
 
 ## GitHub Repository
+
+https://github.com/ezekielbroni15/student-profile-dashboard
 
