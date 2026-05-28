@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./App.css";
 
 import Header from "./components/Header";
@@ -88,14 +87,20 @@ const students = [
 ];
 
 const App = () => {
-  const [filter, setFilter] = useState("all");
-
   const totalScore = students.reduce(
     (accumulator, student) => accumulator + student.score,
-    0
+    0,
   );
 
   const averageScore = totalScore / students.length;
+
+  // Get filter from URL query parameters
+  const getFilterFromURL = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("filter") || "all";
+  };
+
+  const filter = getFilterFromURL();
 
   const filteredStudents = students.filter((student) => {
     if (filter === "active") {
@@ -109,6 +114,14 @@ const App = () => {
     return true;
   });
 
+  const handleFilterChange = (newFilter) => {
+    const url = new URL(window.location);
+    url.searchParams.set("filter", newFilter);
+    window.history.pushState({}, "", url);
+    // Reload the page to apply the filter
+    window.location.reload();
+  };
+
   return (
     <div className="app">
       <Header
@@ -120,33 +133,28 @@ const App = () => {
       <div className="filter-container">
         <button
           className={filter === "all" ? "active-btn" : ""}
-          onClick={() => setFilter("all")}
+          onClick={() => handleFilterChange("all")}
         >
           Show All
         </button>
 
         <button
           className={filter === "active" ? "active-btn" : ""}
-          onClick={() => setFilter("active")}
+          onClick={() => handleFilterChange("active")}
         >
           Active Students
         </button>
 
         <button
           className={filter === "inactive" ? "active-btn" : ""}
-          onClick={() => setFilter("inactive")}
+          onClick={() => handleFilterChange("inactive")}
         >
           Inactive Students
         </button>
       </div>
 
-      <StudentList
-        students={filteredStudents}
-        title="Student Roster"
-      >
-        <p>
-          End of student list — {filteredStudents.length} total
-        </p>
+      <StudentList students={filteredStudents} title="Student Roster">
+        <p>End of student list — {filteredStudents.length} total</p>
       </StudentList>
     </div>
   );
